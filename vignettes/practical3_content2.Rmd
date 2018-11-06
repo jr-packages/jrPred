@@ -1,0 +1,248 @@
+# Predictive Analytics: practical 3 
+
+## The `OJ` data set
+
+The `OJ` data set from the `ISLR` package contains information on which of two brands of orange juice customers purchased^[The response variable is `Purchase`.] and can be loaded using
+
+
+```{r}
+data(OJ, package = "ISLR")
+```
+
+
+
+\noindent After loading the `caret` and `jrPred` package
+
+
+```{r, message = FALSE}
+library("caret")
+library("jrPred")
+```
+
+
+
+\noindent make an initial examination of the relationships between each of the predictors and the response^[Use the `plot` function with a model formula or the `pairs` function.]
+
+
+```{r, eval = FALSE}
+par(mfrow = c(4, 5), mar = c(4, 0.5, 0.5, 0.5))
+plot(Purchase ~ ., data = OJ)
+```
+
+
+
+## Initial model building using logistic regression
+
+
+- To begin, create a logistic regression model that takes into consideration the prices of the two brands of orange juice, `PriceCH` and `PriceMM`. Hint: Use the `train` function, with `method = 'glm'`.  Look at the help page for the data set to understand what these variables represent.
+```{r}
+m1 = train(Purchase ~ PriceCH + PriceMM,
+    data = OJ, method = "glm")
+```
+  - What proportion of purchases does this model get right?
+```{r}
+getTrainPerf(m1)
+```
+  - How does this compare to if we used no model?
+```{r}
+# with no model we essentially predict according to
+# proportion of observations in data
+
+# work out proportions
+probs = table(OJ$Purchase)/nrow(OJ)
+# sample using proportions
+preds = sample(levels(OJ$Purchase), prob = probs)
+# work out correct proportion
+mean(preds != OJ$Purchase)
+```
+
+- Use your model to predict if a customer will buy CH or MM if the price of CH and MM is 2.3 and 2.4 respectively
+
+```{r}
+predict(m1, newdata = data.frame(PriceCH = 2.3, PriceMM = 2.4))
+```
+
+## Visualising the boundary
+
+The `jrPred` package contains following code produces a plot of the decision boundary as seen in figure 1.
+
+```{r, fig.cap = "Examining the decision boundary for orange juice brand purchases by price.", echo = TRUE, fig.keep="all"}
+boundary_plot(m1,OJ$PriceCH, OJ$PriceMM, OJ$Purchase,
+              xlab="Price CH", ylab="Price MM")
+```
+
+
+\noindent Run the boundary code above, and make sure you get a similar plot.
+
+  - What happens if we add an interaction term? How does the boundary change?
+```{r}
+# We now have a curved decision boundary.
+# There are two regions of where we would predict MM, bottom left, and a tiny one up in the top right.
+```
+- Try adding polynomial terms.
+
+
+## Using all of the predictors
+
+
+  - Instead of just using 2 predictors we want to use all of them. However, we have a few problems to tackle first. A few of our predictors are linear combinations of the others. This leads to what is called rank-deficiency problems. For instance, if you run the following model you'll realise there are a few NAs.
+```{r, warning = FALSE, echo = TRUE}
+mLM = train(Purchase ~ ., data = OJ, method = "glm")
+```
+
+Take the predictor PriceDiff. It is impossible to estimate it's coefficient as it is a linear combination of PriceCH and PriceMM i.e. `PriceDiff = PriceCH - PriceMM`. In this particularly data set, there are quite a few linear combinations. We can find them using the `findLinearCombos()` and `model.matrix()` functions
+
+```{r, echo = TRUE}
+remove = findLinearCombos(model.matrix(Purchase ~ ., data = OJ))
+```
+
+\noindent The output list has a component called `remove` suggesting which variables should be removed to get rid of linear combinations
+
+```{r, echo = TRUE}
+(badvar = colnames(OJ)[remove$remove])
+```
+
+We can then remove these variable from the data
+```{r, echo = TRUE}
+OJsub = OJ[, -remove$remove]
+```
+
+
+  - Use the new `OJsub` data set to model `Purchase` using all of the predictors. How accurate is the model?
+```{r}
+mLM = train(Purchase~., data = OJsub, method = "glm")
+getTrainPerf(mLM)
+```
+  - What are the values of sensitivity and specificity?
+```{r}
+## could use confusionMatrix
+(cmLM = confusionMatrix(predict(mLM,OJsub),OJsub$Purchase))
+```
+```{r}
+# or
+sensitivity(predict(mLM,OJsub),OJsub$Purchase)
+specificity(predict(mLM,OJsub),OJsub$Purchase)
+```
+  - What does this mean?
+```{r}
+#The model is fairly good at picking up both positive events, person buys CH, and negative events, MM.
+```
+
+## K nearest neigbours
+
+
+  - Try fitting models using the K nearest neighbours algorithm. To begin with, just have two covariates and use the `boundary_plot` function to visualise the results.
+
+```{r, message = FALSE}
+mKNN = train(Purchase~., data = OJsub, method = "knn")
+```
+
+  - How do they comparein accuracy, sensitivity and specificity?
+
+```{r}
+cmKNN = confusionMatrix(predict(mKNN,OJsub),OJsub$Purchase)
+(info = data.frame(Model = c("logistic","knn"),
+           Accuracy = c(cmLM$overall["Accuracy"],
+               cmKNN$overall["Accuracy"]),
+           Sensitivity = c(cmLM$byClass["Sensitivity"],
+               cmKNN$byClass["Sensitivity"]),
+           Specificity = c(cmLM$byClass["Specificity"],
+               cmKNN$byClass["Specificity"])))
+```
+
+  - How does varying the number of nearest neighbours in a KNN affect the model fit?
+  
+```{r}
+# Accuracy increases at first with knn before then getting worse after a peak value of 9.
+(mKNN2 = train(Purchase~., data = OJsub, method = "knn",
+    tuneGrid = data.frame(k = 1:30)))
+```
+
+
+
+\noindent The KNN algorithm described in the notes can also be used for regression problems. In this case the predicted response is the mean of the $k$ nearest neighbours.
+
+  - Try fitting the KNN model for the regression problem in practical 1.
+```{r, message=FALSE, warning = FALSE}
+library("jrPred")
+data(FuelEconomy, package = "AppliedPredictiveModeling")
+regKNN = train(FE~., data = cars2010, method = "knn")
+regLM = train(FE~., data = cars2010, method = "lm")
+getTrainPerf(regKNN)
+getTrainPerf(regLM)
+```
+
+  - How does this compare to the linear regression models?
+
+```{r}
+# The KNN regression model is not as good as the linear model, only just
+```
+
+
+
+
+## Resampling methods
+
+
+  - Fit a KNN regression model to the `cars2010` data set with `FE` as the response.
+```{r, echo = TRUE}
+data(FuelEconomy, package = "AppliedPredictiveModeling")
+```
+```{r}
+mKNN = train(FE ~ ., method = "knn", data = cars2010)
+```
+  - Estimate test error using 10-fold cross validation
+```{r}
+# set the train control object
+tc10fold = trainControl(method = "cv", number = 10)
+# fit the model using this train control object
+mKNN10 = train(FE~., method = "knn", data = cars2010,
+    trControl = tc10fold)
+getTrainPerf(mKNN10)
+```
+
+  - Again using 10 fold CV, estimate the performance of the k nearest neighbours algorithm for different values of $k$.
+```{r}
+mKNNcv10 = train(FE~., method = "knn", data = cars2010,
+     trControl = tc10fold, tuneGrid = data.frame(k= 2:20))
+```
+  - Which model is chosen as the best?
+```{r}
+mKNNcv10$bestTune
+```
+
+- Create new `trainControl` objects to specify the use of 5 fold and 15 fold cross validation to estimate test RMSE.
+```{r}
+tc5fold = trainControl(method = "cv", number = 5)
+tc15fold = trainControl(method = "cv", number = 15)
+```
+
+  - Go through the same training procedure attempting to find the best KNN model.
+```{r}
+mKNNcv5 = train(FE~., data = cars2010, method = "knn",
+    trControl = tc5fold, tuneGrid = data.frame(k = 2:20))
+
+mKNNcv15 = train(FE~., data = cars2010, method = "knn",
+    trControl = tc15fold, tuneGrid = data.frame(k = 2:20))
+mKNNcv5$bestTune
+mKNNcv15$bestTune
+```
+
+## An example with more than two classes
+
+The `Glass` data set in the `mlbench` package is a data frame containing examples of the chemical analysis of $7$ different types of glass. The goal is to be able to predict which category glass falls into based on the values of the $9$ predictors.
+
+
+```{r, echo = TRUE}
+data(Glass, package = "mlbench")
+```
+
+
+
+\noindent A logistic regression model is typically not suitable for more than $2$ classes, so try fitting a k nearest neighbour model. Use k-fold cross validation is you want to. What proportion of predictions does your model get correct?
+
+```{r}
+tc = trainControl(method = "cv", number = 10)
+model = train(Type ~ ., data = Glass, trControl = tc, method = "knn")
+getTrainPerf(model)
+```

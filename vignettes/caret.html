@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Colin Gillespie" />
+
+<meta name="date" content="2018-11-06" />
+
+<title>The caret package</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 800px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 20px;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 0;
+padding: 4px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table:not([class]) {
+margin: auto;
+min-width: 40%;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table[summary="R argblock"] {
+width: 100%;
+border: none;
+}
+table:not([class]) th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table:not([class]) td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table:not([class]), table:not([class]) th, table:not([class]) td {
+border-left-style: none;
+border-right-style: none;
+}
+table:not([class]) tr.odd {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 13px;
+padding-bottom: 1px;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f5f5f5;
+border-radius: 3px;
+color: #333;
+}
+pre {
+overflow-x: auto;
+border-radius: 3px;
+margin: 5px 0 10px 0;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: white;
+border: #f5f5f5 1px solid;
+}
+pre:not([class]) code {
+color: #444;
+background-color: white;
+}
+code {
+font-family: monospace;
+font-size: 90%;
+}
+p > code, li > code {
+padding: 2px 4px;
+color: #d14;
+border: 1px solid #e1e1e8;
+white-space: inherit;
+}
+div.figure {
+text-align: center;
+}
+table > caption, div.figure p.caption {
+font-style: italic;
+}
+table > caption span, div.figure p.caption span {
+font-style: normal;
+font-weight: bold;
+}
+p {
+margin: 0 0 10px;
+}
+table:not([class]) {
+margin: auto auto 10px auto;
+}
+img:not([class]) {
+background-color: #FFFFFF;
+padding: 2px;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+max-width: 100%;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f5f5f5;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f5f5f5;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f5f5f5;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+div.r-help-page {
+background-color: #f9f9f9;
+border-bottom: #ddd 1px solid;
+margin-bottom: 10px;
+padding: 10px;
+}
+div.r-help-page:hover {
+background-color: #f4f4f4;
+}
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">The caret package</h1>
+<h4 class="author"><em>Colin Gillespie</em></h4>
+<h4 class="date"><em>2018-11-06</em></h4>
+
+
+
+<div id="the-caret-package" class="section level1">
+<h1>The caret package</h1>
+<p>The caret package~ is a great little package that creates an interface to a myriad of model building tools included in various packages in the R universe. It is particularly nice as it provides a single set of functions that can be used for fitting, prediction and assessment of models, removing the need to remember any syntactic differences over the other packages. It is essentially a fancy wrapper for all of the modelling tools that we might want to use. To install this package:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">&quot;caret&quot;</span>)</a></code></pre></div>
+<p>The vignette for this package gives a little introduction which can be viewed using</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">vignette</span>(<span class="st">&quot;caret&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;caret&quot;</span>)</a></code></pre></div>
+<p>There is also a website with lots of information about this <a href="http://topepo.github.io/caret/">package</a>. There are many models that can be fitted using this package, a list of which can be found <a href="http://topepo.github.io/caret/modelList.html">here</a> and is a useful reference.We use this package throughout today as the mechanism for training and predicting from models is consistent.</p>
+<p>The function <code>train</code> I can use to fit my model given a set of training data, and <code>predict()</code> provides an interface for prediction given new values of the predictors. As with lots of R functions there are a number of arguments to each of these functions and we will use a number of these throughout the course.</p>
+<div id="advanced-caret-use" class="section level2">
+<h2>Advanced caret use</h2>
+<p>There are lots of nice features included with the <code>caret</code> package some of which I will mention here.</p>
+</div>
+<div id="parallel-computation" class="section level2">
+<h2>Parallel computation</h2>
+<p><code>caret</code> has built into it’s train function the ability to use parallel computation for model fitting. The parallel computation typically applies to the resampling methods that are used to asses model performance with models being fit and tested using a data partition on each thread.</p>
+<p>Using this functionality is trivial on a linux machine, in fact by default the train method will use parallel computing if available, so all we need to do is set up an environment and make R aware of it.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;doMC&quot;</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">registerDoMC</span>(<span class="dt">cores =</span> <span class="dv">8</span>)</a></code></pre></div>
+<p>This unfortunately doesn’t work on Windows, however we can use the <code>doParallel</code> package to acheive the same thing:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;doParallel&quot;</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">cl =<span class="st"> </span><span class="kw">makeCluster</span>(<span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw">registerDoParallel</span>(cl)</a></code></pre></div>
+<p>And that’s it. If there is a registered parallel back end the train function will use it.</p>
+</div>
+<div id="using-the-help-functionality" class="section level2">
+<h2>Using the help functionality</h2>
+<p>Using help pages from <code>caret</code> is a little more difficult to follow than with standard functions like plot, particularly when it comes to model types. The standard notation for help pages can be used</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">?train</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">?varImp</a></code></pre></div>
+<p>but for information about models and their parameters we need to look in the packages that the models come from. The website above gives information about where model functions come from. To look at a particular function in a particular package we can use</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">?ipred<span class="op">::</span>treebag</a></code></pre></div>
+<p>which looks for the help function for the <code>treebag</code> method that is in the <code>ipred</code> package that we used earlier for bagged trees.</p>
+</div>
+<div id="plot-functions" class="section level2">
+<h2>Plot functions</h2>
+<p>There are lots of plot functions associated with different caret objects. They often work by just using the plot command with a different plot from each object. To see a plot methods help file you can use <code>?plot.&lt;&lt;object type&gt;&gt;</code> notation:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">?plot.train</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">?plot.varImp.train</a></code></pre></div>
+<p>Try the following example</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;caret&quot;</span>)</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;pls&quot;</span>)</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw">data</span>(diamonds, <span class="dt">package =</span> <span class="st">&quot;ggplot2&quot;</span>)</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">i =<span class="st"> </span><span class="kw">sample</span>(<span class="kw">nrow</span>(diamonds), <span class="dv">1000</span>) <span class="co"># some subset to help plotting</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">diamonds =<span class="st"> </span>diamonds[i,]</a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">m =<span class="st"> </span><span class="kw">train</span>(price<span class="op">~</span>., <span class="dt">method =</span> <span class="st">&quot;pls&quot;</span>, <span class="dt">data =</span> diamonds, </a>
+<a class="sourceLine" id="cb8-7" data-line-number="7">    <span class="dt">tuneLength =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co"># a plot of model object gives us the resampling </span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co"># information across tuning parameters</span></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="kw">plot</span>(m)</a>
+<a class="sourceLine" id="cb8-11" data-line-number="11">## using the varImp function with plot we get</a>
+<a class="sourceLine" id="cb8-12" data-line-number="12">## variable importance scores</a>
+<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="kw">plot</span>(<span class="kw">varImp</span>(m))</a>
+<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co"># a plot of the final model shows predicted against</span></a>
+<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co"># observed values</span></a>
+<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="kw">plot</span>(m<span class="op">$</span>finalModel)</a>
+<a class="sourceLine" id="cb8-17" data-line-number="17">## a plot of residuals against fitted values</a>
+<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="kw">plot</span>(<span class="kw">fitted.values</span>(m),<span class="kw">resid</span>(m))</a></code></pre></div>
+<p>There are lots of objects that are part of a train object which can be explored easily since each one is just a list</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">names</span>(m)</a></code></pre></div>
+<pre><code>##  [1] &quot;method&quot;       &quot;modelInfo&quot;    &quot;modelType&quot;    &quot;results&quot;     
+##  [5] &quot;pred&quot;         &quot;bestTune&quot;     &quot;call&quot;         &quot;dots&quot;        
+##  [9] &quot;metric&quot;       &quot;control&quot;      &quot;finalModel&quot;   &quot;preProcess&quot;  
+## [13] &quot;trainingData&quot; &quot;resample&quot;     &quot;resampledCM&quot;  &quot;perfNames&quot;   
+## [17] &quot;maximize&quot;     &quot;yLimits&quot;      &quot;times&quot;        &quot;levels&quot;      
+## [21] &quot;terms&quot;        &quot;coefnames&quot;    &quot;contrasts&quot;    &quot;xlevels&quot;</code></pre>
+<p>in addition</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">str</span>(m)</a></code></pre></div>
+<p>gives lots of information about the structure of the object, the output of which has been omitted here.</p>
+</div>
+<div id="specifying-training-criteria" class="section level2">
+<h2>Specifying training criteria</h2>
+<p>The <code>trainControl</code> function takes a number of arguments for helping to choose which model to keep. For full details see the help page but here are a few useful ones:</p>
+<ul>
+<li><code>method</code> – the method used for estimation of statistics, options include <code>boot</code>, <code>cv</code> and <code>LOOCV</code></li>
+<li><code>index</code> – for specifying a particular training set via indicies, by default the rest will be used for validation</li>
+</ul>
+<p>Some useful arguments for the <code>train</code> function:</p>
+<ul>
+<li>method – character – model type to use, refer to website for choices</li>
+<li>tuneLength – numeric – the number of unique tuning parameters to try</li>
+<li>tuneGrid – data frame – a specific grid of tuning parameters for the model</li>
+<li>metric – character – the meaesure by which to choose the best model, possible values might be <code>RMSE</code>, <code>Accuraccy</code> where appropriate</li>
+<li>trControl – trainControl object – to pass information from train control</li>
+<li>preProcess – character – pass arguments for any data pre–processing such as <code>center</code> and <code>scale</code></li>
+<li>Can also pass in model arguments that get passed to the underlying model function, such as <code>nbagg</code> for the treebag method</li>
+</ul>
+</div>
+</div>
+
+<script type="text/javascript">
+window.onload = function() {
+  var i, fig = 1, caps = document.getElementsByClassName('caption');
+  for (i = 0; i < caps.length; i++) {
+    var cap = caps[i];
+    if (cap.parentElement.className !== 'figure' || cap.nodeName !== 'P')
+      continue;
+    cap.innerHTML = '<span>Figure ' + fig + ':</span> ' + cap.innerHTML;
+    fig++;
+  }
+  fig = 1;
+  caps = document.getElementsByTagName('caption');
+  for (i = 0; i < caps.length; i++) {
+    var cap = caps[i];
+    if (cap.parentElement.nodeName !== 'TABLE') continue;
+    cap.innerHTML = '<span>Table ' + fig + ':</span> ' + cap.innerHTML;
+    fig++;
+  }
+}
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
