@@ -5,11 +5,11 @@ knitr::opts_chunk$set(echo = TRUE)
 #  install.packages("drat")
 
 ## ---- eval = FALSE, echo = TRUE------------------------------------------
-#  drat::addRepo("rcourses")
-#  install.packages("jrPredictive")
+#  drat::addRepo("jr-packages")
+#  install.packages("jrPred")
 
 ## ---- echo = TRUE, message = FALSE---------------------------------------
-library("jrPredictive")
+library("jrPred")
 
 ## ---- echo = TRUE, message = FALSE---------------------------------------
 library("caret")
@@ -21,64 +21,40 @@ data(FuelEconomy, package = "AppliedPredictiveModeling")
 m1 = train(FE ~ EngDispl, method = "lm", data = cars2010)
 
 ## ------------------------------------------------------------------------
-rstd = rstandard(m1$finalModel)
-plot(fitted.values(m1$finalModel), rstd)
-
-## ---- eval = FALSE, echo = TRUE------------------------------------------
-#  abline(h = c(-2, 0, 2), col = 2:3, lty = 2:1)
+predict(m1, newdata = data.frame(EngDispl = 7))
 
 ## ------------------------------------------------------------------------
-# There definitely appears to be some trend in the
-# residuals.  The curved shape indicates that we
-# potentially require some transformation of variables.
-# A squared term might help.
-
-## ------------------------------------------------------------------------
-plot(cars2010$FE, fitted.values(m1$finalModel), xlab = "FE",
-    ylab = "Fitted values", xlim = c(10, 75), ylim = c(10,
-        75))
-abline(0, 1, col = 3, lty = 2)
-
-## ------------------------------------------------------------------------
-# We seem to slightly over estimate more often than not
-# in the 25-35 range. For the upper end of the range we
-# seem to always under estimate the true values.
-
-## ------------------------------------------------------------------------
-qqnorm(rstd)
-qqline(rstd)
-plot(cars2010$EngDispl, rstd)
-abline(h = c(-2, 0, 2), col = 2:3, lty = 1:2)
-
-## ------------------------------------------------------------------------
-# We are struggling to justify the assumption of
-# normality in the residuals here, all of the diagnostics
-# indicate patterns remain in the residuals that are
-# currently unexplained by the model.
-
-## ------------------------------------------------------------------------
-# We are struggling to justify the assumption of
-# normality in the residuals here, all of the diagnostics
-# indicate patterns remain in the residuals that are
-# currently unexplained by the model
+sqrt(mean(resid(m1)^2))
+# or 
+RMSE(fitted.values(m1), cars2010$FE)
 
 ## ------------------------------------------------------------------------
 m2 = train(FE ~ poly(EngDispl, 2, raw = TRUE), data = cars2010,
     method = "lm")
 
 ## ------------------------------------------------------------------------
-# The residual diagnostics indicate a better fit now that
-# the quadratic term has been included.
-
-## ------------------------------------------------------------------------
-# Perhaps the residuals more closely match the assumption
-# of normality under this transformation. However we need
-# to be careful about interpretation now as the response
-# is on the log scale. Likewise for prediction we need to
-# remember to undo the transformation.
+sqrt(mean(resid(m2)^2)) - sqrt(mean(resid(m1)^2))
+# Yes
 
 ## ------------------------------------------------------------------------
 m3 = train(FE ~ EngDispl + NumCyl, data = cars2010, method = "lm")
+
+## ------------------------------------------------------------------------
+sqrt(mean(resid(m3)^2))
+
+## ---- echo  TRUE, fig.keep="none"----------------------------------------
+plot(cars2010$EngDispl, cars2010$FE)
+
+## ---- echo = TRUE, eval = FALSE------------------------------------------
+#  abline(m1$finalModel, col = 2)
+
+## ---- echo = TRUE, eval = FALSE------------------------------------------
+#  x_values = seq(1,8.4,0.1)
+#  new_pred_values = predict(m2, newdata = data.frame(EngDispl = x_values)
+#  lines(x = x_values, y = new_pred_values, col = 3)
+
+## ------------------------------------------------------------------------
+# Yes, line looks to curve with the data now we have added a quadratic term
 
 ## ---- echo = TRUE--------------------------------------------------------
 ## points = TRUE to also show the points
@@ -88,8 +64,4 @@ plot3d(m3, cars2010$EngDispl, cars2010$NumCyl, cars2010$FE,
 ## ---- echo = TRUE--------------------------------------------------------
 threejs::scatterplot3js(cars2010$EngDispl, cars2010$NumCyl,
     cars2010$FE, size = 0.5)
-
-## ---- echo = TRUE--------------------------------------------------------
-m4 = train(FE ~ EngDispl * NumCyl + I(NumCyl^5), data = cars2010,
-    method = "lm")
 

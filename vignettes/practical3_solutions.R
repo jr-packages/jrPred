@@ -6,7 +6,7 @@ data(OJ, package = "ISLR")
 
 ## ---- message = FALSE----------------------------------------------------
 library("caret")
-library("jrPredictive")
+library("jrPred")
 
 ## ---- eval = FALSE-------------------------------------------------------
 #  par(mfrow = c(4, 5), mar = c(4, 0.5, 0.5, 0.5))
@@ -88,7 +88,7 @@ cmKNN = confusionMatrix(predict(mKNN,OJsub),OJsub$Purchase)
     tuneGrid = data.frame(k = 1:30)))
 
 ## ---- message=FALSE, warning = FALSE-------------------------------------
-library("jrPredictive")
+library("jrPred")
 data(FuelEconomy, package = "AppliedPredictiveModeling")
 regKNN = train(FE~., data = cars2010, method = "knn")
 regLM = train(FE~., data = cars2010, method = "lm")

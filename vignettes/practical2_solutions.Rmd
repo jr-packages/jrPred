@@ -14,6 +14,6 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, child = 'practical2_content2.Rmd'}
+```{r, child = 'practical2_content.Rmd'}
 ```
 

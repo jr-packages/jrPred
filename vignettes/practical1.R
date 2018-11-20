@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = FALSE, results = "hide", fig.keep = "none")
 #  install.packages("jrPred")
 
 ## ---- echo = TRUE, message = FALSE---------------------------------------
-library("jrPredictive")
+library("jrPred")
 
 ## ---- echo = TRUE, message = FALSE---------------------------------------
 library("caret")
