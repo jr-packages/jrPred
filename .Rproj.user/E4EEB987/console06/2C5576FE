@@ -1046,3 +1046,26 @@ Changes not staged for commit:
 
 no changes added to commit (use "git add" and/or "git commit -a")
 ]0;/home/theo/GitHub/jr-packages/jrPred]0;theo@theo-Inspiron-5570: ~/GitHub/jr-packages/jrPred[01;32mtheo@theo-Inspiron-5570[00m:[01;34m~/GitHub/jr-packages/jrPred[00m$ git add . 
+]0;/home/theo/GitHub/jr-packages/jrPred]0;theo@theo-Inspiron-5570: ~/GitHub/jr-packages/jrPred[01;32mtheo@theo-Inspiron-5570[00m:[01;34m~/GitHub/jr-packages/jrPred[00m$ git commit -m ""a"t"t"e"m"p"t"i"n"g" "t"o" "f"i"x" "t" [A]0;theo@theo-Inspiron-5570: ~/GitHub/jr-packages/jrPred[01;32mtheo@theo-Inspiron-5570[00m:[01;34m~/GitHub/jr-packages/jrPred[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cr""a"v"i"s" "[1P"
+[master bed4bce] attempting to fix travis
+ 13 files changed, 122 insertions(+), 469 deletions(-)
+ rewrite .Rproj.user/E4EEB987/console06/INDEX001 (86%)
+ delete mode 100644 vignettes/practical4.R
+ delete mode 100644 vignettes/practical4.Rmd
+ delete mode 100644 vignettes/practical4.pdf
+ delete mode 100644 vignettes/practical4_content.Rmd
+]0;/home/theo/GitHub/jr-packages/jrPred]0;theo@theo-Inspiron-5570: ~/GitHub/jr-packages/jrPred[01;32mtheo@theo-Inspiron-5570[00m:[01;34m~/GitHub/jr-packages/jrPred[00m$ git push 
+fatal: cannot run rpostback-askpass: No such file or directory
+Username for 'https://github.com': theoroe3
+fatal: cannot run rpostback-askpass: No such file or directory
+Password for 'https://theoroe3@github.com': 
+Counting objects: 19, done.
+Delta compression using up to 8 threads.
+Compressing objects:   5% (1/17)   Compressing objects:  11% (2/17)   Compressing objects:  17% (3/17)   Compressing objects:  23% (4/17)   Compressing objects:  29% (5/17)   Compressing objects:  35% (6/17)   Compressing objects:  41% (7/17)   Compressing objects:  47% (8/17)   Compressing objects:  52% (9/17)   Compressing objects:  58% (10/17)   Compressing objects:  64% (11/17)   Compressing objects:  70% (12/17)   Compressing objects:  76% (13/17)   Compressing objects:  82% (14/17)   Compressing objects:  88% (15/17)   Compressing objects:  94% (16/17)   Compressing objects: 100% (17/17)   Compressing objects: 100% (17/17), done.
+Writing objects:   5% (1/19)   Writing objects:  10% (2/19)   Writing objects:  15% (3/19)   Writing objects:  21% (4/19)   Writing objects:  26% (5/19)   Writing objects:  31% (6/19)   Writing objects:  36% (7/19)   Writing objects:  42% (8/19)   Writing objects:  47% (9/19)   Writing objects:  52% (10/19)   Writing objects:  57% (11/19)   Writing objects:  63% (12/19)   Writing objects:  68% (13/19)   Writing objects:  73% (14/19)   Writing objects:  78% (15/19)   Writing objects:  84% (16/19)   Writing objects:  89% (17/19)   Writing objects:  94% (18/19)   Writing objects: 100% (19/19)   Writing objects: 100% (19/19), 185.57 KiB | 7.73 MiB/s, done.
+Total 19 (delta 11), reused 0 (delta 0)
+remote: Resolving deltas:   0% (0/11)   [Kremote: Resolving deltas:   9% (1/11)   [Kremote: Resolving deltas:  18% (2/11)   [Kremote: Resolving deltas:  27% (3/11)   [Kremote: Resolving deltas:  36% (4/11)   [Kremote: Resolving deltas:  45% (5/11)   [Kremote: Resolving deltas:  54% (6/11)   [Kremote: Resolving deltas:  63% (7/11)   [Kremote: Resolving deltas:  72% (8/11)   [Kremote: Resolving deltas:  81% (9/11)   [Kremote: Resolving deltas:  90% (10/11)   [Kremote: Resolving deltas: 100% (11/11)   [Kremote: Resolving deltas: 100% (11/11), completed with 11 local objects.[K
+To https://github.com/jr-packages/jrPred.git
+   8c8330e..bed4bce  master -> master
+]0;/home/theo/GitHub/jr-packages/jrPred]0;theo@theo-Inspiron-5570: ~/GitHub/jr-packages/jrPred[01;32mtheo@theo-Inspiron-5570[00m:[01;34m~/GitHub/jr-packages/jrPred[00m$ [K]0;theo@theo-Inspiron-5570: ~/GitHub/jr-packages/jrPred[01;32mtheo@theo-Inspiron-5570[00m:[01;34m~/GitHub/jr-packages/jrPred[00m$ git push commit -m "attemptingg to fix travis"[A]0;theo@theo-Inspiron-5570: ~/GitHub/jr-packages/jrPred[01;32mtheo@theo-Inspiron-5570[00m:[01;34m~/GitHub/jr-packages/jrPred[00m$ [C[C[C[Cadd . [K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C

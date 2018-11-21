@@ -1,5 +1,5 @@
 ## ---- setup, echo = FALSE------------------------------------------------
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, results = "hide", fig.keep = "none")
 
 ## ---- eval = FALSE, echo = TRUE------------------------------------------
 #  install.packages("drat")
@@ -61,7 +61,7 @@ plot(cars2010$EngDispl, cars2010$FE)
 plot3d(m3, cars2010$EngDispl, cars2010$NumCyl, cars2010$FE,
     points = FALSE)
 
-## ---- echo = TRUE, eval = FALSE------------------------------------------
-#  threejs::scatterplot3js(cars2010$EngDispl, cars2010$NumCyl,
-#      cars2010$FE, size = 0.5)
+## ---- echo = TRUE--------------------------------------------------------
+threejs::scatterplot3js(cars2010$EngDispl, cars2010$NumCyl,
+    cars2010$FE, size = 0.5)
 
