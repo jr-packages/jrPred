@@ -137,7 +137,7 @@ specificity(predict(mLM,OJsub),OJsub$Purchase)
 mKNN = train(Purchase~., data = OJsub, method = "knn")
 ```
 
-  - How do they comparein accuracy, sensitivity and specificity?
+  - How do they compare in accuracy, sensitivity and specificity?
 
 ```{r}
 cmKNN = confusionMatrix(predict(mKNN,OJsub),OJsub$Purchase)
@@ -156,17 +156,18 @@ cmKNN = confusionMatrix(predict(mKNN,OJsub),OJsub$Purchase)
 # Accuracy increases at first with knn before then getting worse after a peak value of 9.
 (mKNN2 = train(Purchase~., data = OJsub, method = "knn",
     tuneGrid = data.frame(k = 1:30)))
+plot(mKNN2)
 ```
 
 
 
 \noindent The KNN algorithm described in the notes can also be used for regression problems. In this case the predicted response is the mean of the $k$ nearest neighbours.
 
-  - Try fitting the KNN model for the regression problem in practical 1.
+  - Try fitting the KNN model for the regression problem in practical 1. You could vary the `k` parameter to try to find a better model. 
 ```{r, message=FALSE, warning = FALSE}
 library("jrPred")
 data(FuelEconomy, package = "AppliedPredictiveModeling")
-regKNN = train(FE~., data = cars2010, method = "knn")
+regKNN = train(FE~., data = cars2010, method = "knn", tuneGrid = data.frame(k = c(1:5,10,20,50,100)))
 regLM = train(FE~., data = cars2010, method = "lm")
 getTrainPerf(regKNN)
 getTrainPerf(regLM)
@@ -174,59 +175,6 @@ getTrainPerf(regLM)
 
   - How does this compare to the linear regression models?
 
-```{r}
-# The KNN regression model is not as good as the linear model, only just
-```
-
-
-
-
-## Resampling methods
-
-
-  - Fit a KNN regression model to the `cars2010` data set with `FE` as the response.
-```{r, echo = TRUE}
-data(FuelEconomy, package = "AppliedPredictiveModeling")
-```
-```{r}
-mKNN = train(FE ~ ., method = "knn", data = cars2010)
-```
-  - Estimate test error using 10-fold cross validation
-```{r}
-# set the train control object
-tc10fold = trainControl(method = "cv", number = 10)
-# fit the model using this train control object
-mKNN10 = train(FE~., method = "knn", data = cars2010,
-    trControl = tc10fold)
-getTrainPerf(mKNN10)
-```
-
-  - Again using 10 fold CV, estimate the performance of the k nearest neighbours algorithm for different values of $k$.
-```{r}
-mKNNcv10 = train(FE~., method = "knn", data = cars2010,
-     trControl = tc10fold, tuneGrid = data.frame(k= 2:20))
-```
-  - Which model is chosen as the best?
-```{r}
-mKNNcv10$bestTune
-```
-
-- Create new `trainControl` objects to specify the use of 5 fold and 15 fold cross validation to estimate test RMSE.
-```{r}
-tc5fold = trainControl(method = "cv", number = 5)
-tc15fold = trainControl(method = "cv", number = 15)
-```
-
-  - Go through the same training procedure attempting to find the best KNN model.
-```{r}
-mKNNcv5 = train(FE~., data = cars2010, method = "knn",
-    trControl = tc5fold, tuneGrid = data.frame(k = 2:20))
-
-mKNNcv15 = train(FE~., data = cars2010, method = "knn",
-    trControl = tc15fold, tuneGrid = data.frame(k = 2:20))
-mKNNcv5$bestTune
-mKNNcv15$bestTune
-```
 
 ## An example with more than two classes
 

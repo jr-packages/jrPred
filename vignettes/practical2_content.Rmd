@@ -29,44 +29,29 @@ res = resid(mLM)
 (trainRMSE = sqrt(mean(res*res)))
 ```
 
-- We can re-train the model using the validation set approach to estimate a test RMSE. That is, splitting up the data into a training and testing set.
 
+- We can use k-fold cross validation to estimate test error rate. Re-run this model but using 10-fold cross-validation instead. You can set up your trainControl object using
 
-```{r, echo = TRUE, results='hold'}
-## pick an index for samples
-trainIndex = createDataPartition(cars2010$FE, p = 0.5, list = FALSE)
-## set up validation set approach
-tcVS =  trainControl(method = "cv", 
-                     number = 1, 
-                     index = list(Fold1 = trainIndex))
-
-mLMVS = train(FE~EngDispl+NumCyl+NumGears, method = "lm",
-              data = cars2010, trControl = tcVS)
-getTrainPerf(mLMVS)
+```{r, echo = TRUE}
+# set up train control objects
+tcKFOLD = trainControl(method = "cv", number = 10)
 ```
-Doing it this way we can see that the RMSE is larger. Validation set estimates tend to over estimate the test RMSE as models perform worse with less data. Furthermore, if we ran this code again, we'd get a completely different test RMSE estimate. For validation set estimates, the test RMSE is highly variable depending on which observations are chosen for each group.
 
-
-- We can use k-fold cross validation to solve these two issues. Re-run this model but using 10-fold cross-validation instead. 
 
 
 ```{r}
-# set up train control objects
-tcKFOLD = trainControl(method = "cv", number = 10)
 # run model
 mLMKFOLD = train(FE~EngDispl+NumCyl+NumGears, method = "lm",
     data = cars2010, trControl = tcKFOLD)
 ```
 
 
-- How do these estimates compare with the validation set approach?
+- How do these estimates compare with the training error
 
 
 ```{r}
-getTrainPerf(mLMVS)
+trainRMSE
 getTrainPerf(mLMKFOLD)
-# 10-fold is lower than validation set, we mentioned it tended to
-# over estimate test error
 ```
 
 - The object returned by `train` also contains timing information that can be accessed via the `times` component of the list. Which of the methods is fastest?  
@@ -74,7 +59,6 @@ Hint: The `$` notation can be used pick a single list component.
 
 
 ```{r}
-mLMVS$times$everything
 mLMKFOLD$times$everything
 ```
 
@@ -121,6 +105,41 @@ mLM20 = train(FE~EngDispl+NumCyl+NumGears, method = "lm",
 # This is because for each held out fold we are using a greater
 # proportion of the data in training so expect to get a better
 # model.
+```
+
+- Try fitting a linear regression and a ridge regression to the cars data using all available predictors. How do the coefficients and test errors compare? Remeber to centre and scale your data first.
+
+```{r}
+tc = trainControl(method = "cv", number = 10)
+mreg = train(FE~., data = cars2010, method = "lm", 
+             preProcess = c("center","scale"),
+             trControl = tc)
+mridge = train(FE~., data = cars2010, method = "ridge", 
+             preProcess = c("center","scale"),
+             trControl = tc)
+
+creg = coefficients(mreg$finalModel)
+cridge = predict(mridge$finalModel, mode = "fraction",
+s = 1, type = "coefficients")
+
+plot(creg, pch = 19)
+points(cridge$coefficients, col = 2, pch = 19)
+
+dotplot(resamples(list(
+    "reg" = mreg,
+    "ridge" = mridge
+)),metric = "RMSE")
+```
+
+- You could also try with lasso and elastic net models to compare
+
+```{r}
+mlasso = train(FE~., data = cars2010, method = "lasso", 
+             preProcess = c("center","scale"),
+             trControl = tc)
+menet = train(FE~., data = cars2010, method = "enet", 
+             preProcess = c("center","scale"),
+             trControl = tc)
 ```
 
 
